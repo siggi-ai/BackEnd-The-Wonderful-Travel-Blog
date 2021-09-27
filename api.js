@@ -1,5 +1,5 @@
 const express = require("express");
-const mockData = require("./mockData.json");
+let mockData = require("./mockData.json");
 
 const router = express.Router();
 
@@ -7,89 +7,47 @@ router.get("/", function(req, res) {
     res.json(mockData);
 });
 
-router.delete("/:id", function(req, res) {
+router.post("/new_post", function(req, res) {
 
-    const newArray = mockData.filter(function(element) {
+    var input_text = req.body.city;
+
+    const newEntry = {
+        "id": mockData.length +1,
+        "city": req.body.city,
+        "country": req.body.country,
+        "visiting_date": req.body.inputVisitingDate,
+        "image": req.body.image,
+        "position": {
+        "lat": Number(req.body.lat),
+        "lng": Number(req.body.lng)
+        },
+        "author":"Henriette",
+        "authorPic": "https://ksassets.timeincuk.net/wp/uploads/sites/46/2015/11/woman-writing-1.jpg",
+        "description": req.body.description,
+    };
+
+    mockData.push(newEntry);
+    console.log(newEntry);
+    
+
+    res.json({
+        "status": "ok",
+        "message": "entry inserted",
+    });
+});
+
+
+    router.delete("/:id", function(req, res) {
+
+    const newEntry = mockData.filter(function(element) {
         return element.id !== Number(req.params.id);
     });
-    mockData = newArray;
+    mockData = newEntry;
 
     res.json({
         "status": "ok",
-        "message": "user Delete!!!!"
+        "message": "city deleted"
     })
 });
-
-router.post("/new_person", function(req, res) {
-
-    /* console.log(req.body); */
-
-    const newPerson = {
-        "id": req.body.id,
-        "name": req.body.name,
-        "city": req.body.city
-    };
-
-    mockData.push(newPerson);
-
-    res.json({
-        "status": "ok",
-        "message": "New person inserted succesfully"
-    });
-});
-
-router.patch("/update_person", function(req, res) {
-
-    /* console.log(req.body); */
-
-    const updatePerson = {
-        "id": req.body.id,
-        "name": req.body.name,
-        "city": req.body.city
-    };
-
-    /* console.log("'" + updatePerson.name + "'"); */
-    mockData.splice(updatePerson.id, 1, updatePerson);
-
-    res.json({
-        "status": "ok",
-        "message": "person succesfully updated"
-    });
-});
-
-/* router.delete("/delete_person", function(req, res) {
-
-    console.log(req.body);
-
-    const deletePerson = {
-        "id": req.body.id,
-        "name": req.body.name,
-        "city": req.body.city
-    };
-
-    console.log(deletePerson.id);
-    mockData.splice(deletePerson.id - 1, 1);
-
-    res.json({
-        "status": "ok",
-        "message": "person deleted succesfully from database"
-    });
-}); */
-
-router.get("/:id", function(req, res) {
-    
-    const newArray = mockData.filter(function(element) {
-        return element.id === Number(req.params.id);
-    });
-
-    if (newArray.length === 1) {
-        res.json(newArray[0]);
-    } else {
-        res.json("User not found");
-    }
-});
-
-
-
 
 module.exports = router;
